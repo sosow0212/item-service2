@@ -9,7 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -18,6 +20,17 @@ import java.util.List;
 public class FormItemController {
 
     private final ItemRepository itemRepository;
+
+    // Spring의 특별한 기능
+    // Model에 자동으로 담기게 됨
+    @ModelAttribute("regions")
+    public Map<String, String> regions() {
+        Map<String, String> regions = new LinkedHashMap<>(); // hashmap은 순서가 보장 안되기 때문에 linked 사용
+        regions.put("SEOUL", "서울");
+        regions.put("BUSAN", "부산");
+        regions.put("JEJU", "제주");
+        return regions;
+    }
 
     @GetMapping
     public String items(Model model) {
@@ -42,6 +55,7 @@ public class FormItemController {
     @PostMapping("/add")
     public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes) {
         log.info("item.open={}", item.getOpen());
+        log.info("item.regions={}", item.getRegions());
         // Spring은 boolean에서 체크박스 on을 true로 반환해준다.
         // 하지만 체크박스를 선택하지 않고 폼을 전송하면 null 값을 반환해주는 문제가 있다.
         // 이런 문제를 해결하기 위해서 spring에서 _open 처럼 언더바를 붙여서 보내는데 이건 체크를 해제했다고 인식한다.
